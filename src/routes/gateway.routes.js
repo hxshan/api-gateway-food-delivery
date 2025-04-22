@@ -23,5 +23,10 @@ router.use('/restaurant', createProxyMiddleware({
     changeOrigin: true,
     pathRewrite: { '^/api/restaurant': '' }
   }));
+router.use('/order', createProxyMiddleware({
+    target: process.env.ORDER_SERVICE,
+    changeOrigin: true,
+    pathRewrite: { '^/api/order': '' }
+  }));
 
 export default router;
