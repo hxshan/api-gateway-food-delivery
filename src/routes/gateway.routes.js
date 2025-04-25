@@ -10,7 +10,13 @@ router.use('/auth', createProxyMiddleware({
     target: process.env.AUTH_SERVICE,
     changeOrigin: true,
     pathRewrite: { '^/api/auth': '' },
-    logLevel: 'debug'
+    logLevel: 'debug',
+    onProxyRes: (proxyRes, req, res) => {
+      proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin;
+      proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
+      proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+      proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
+    }
   }));
 
   router.use('/user',
