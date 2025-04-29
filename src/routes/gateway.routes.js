@@ -3,7 +3,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import dotenv from 'dotenv';
 
 dotenv.config()
-
+console.log(process.env.USER_SERVICE)
 const router = express.Router();
 
 router.use('/auth', createProxyMiddleware({
@@ -25,11 +25,11 @@ router.use('/auth', createProxyMiddleware({
       changeOrigin: true,
       pathRewrite: { '^/api/user': '' },
       logLevel: 'debug',  
-      onProxyReq: (proxyReq, req, res) => {
-        console.log('➡️ [Gateway] Proxying:', req.method, req.originalUrl);
-      },
       onProxyRes: (proxyRes, req, res) => {
-        console.log('⬅️ [Gateway] Got response for:', req.method, req.originalUrl);
+        proxyRes.headers['Access-Control-Allow-Origin'] = req.headers.origin;
+        proxyRes.headers['Access-Control-Allow-Credentials'] = 'true';
+        proxyRes.headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization';
+        proxyRes.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS';
       }
   }));
 
@@ -43,5 +43,8 @@ router.use('/order', createProxyMiddleware({
     changeOrigin: true,
     pathRewrite: { '^/api/order': '' }
   }));
+router.get('/health', (req, res) => {
+    res.status(200).json({ status: 'OK' });
+  });
 
 export default router;
